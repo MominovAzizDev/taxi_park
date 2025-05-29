@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:paycarmap/modul/car_park_card_modul.dart';
+import 'package:paycarmap/modul/previous_park_card_modul.dart';
 import 'package:paycarmap/service/auth_service.dart';
 import 'package:paycarmap/view/pages/mycar.dart';
 import 'package:paycarmap/view/pages/previous_park.dart';
@@ -155,7 +157,9 @@ class _HomepagesState extends State<Homepages> {
                   ),
                   SizedBox(height: 12),
                   uid == null
-                      ? Center(child: Text("Foydalanuvchi tizimga kirmagan"))
+                      ? const Center(
+                          child: Text("Foydalanuvchi tizimga kirmagan"),
+                        )
                       : StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('users')
@@ -168,16 +172,26 @@ class _HomepagesState extends State<Homepages> {
                                 child: Text("Xatolik: ${snapshot.error}"),
                               );
                             }
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                child: Text("Hech qanday park topilmadi"),
+                              );
+                            }
                             return ListView(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              children: snapshot.data!.docs.map((doc) {
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: snapshot.data!.docs.map<Widget>((doc) {
                                 return PreviousParkCard(
-                                  title: doc['title'] ?? "Noma'lum",
-                                  hour: doc['hour'] ?? "Noma'lum",
-                                  name: doc['name'] ?? "Noma'lum",
-                                  place: doc['place'] ?? "Noma'lum",
-                                  klm: doc['klm'] ?? "Noma'lum",
+                                  model: PreviousParkCardModul(
+                                    title:
+                                        doc['title']?.toString() ?? "Noma'lum",
+                                    hour: doc['hour']?.toString() ?? "Noma'lum",
+                                    name: doc['name']?.toString() ?? "Noma'lum",
+                                    place:
+                                        doc['place']?.toString() ?? "Noma'lum",
+                                    klm: doc['klm']?.toString() ?? "Noma'lum",
+                                  ),
                                 );
                               }).toList(),
                             );
@@ -221,21 +235,30 @@ class _HomepagesState extends State<Homepages> {
                         .collection('cars')
                         .snapshots(),
                     builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
                       if (snapshot.hasError) {
                         return Center(
                           child: Text("Xatolik: ${snapshot.error}"),
                         );
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(child: Text("Mashinalar topilmadi"));
                       }
                       return ListView(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         children: snapshot.data!.docs.map((doc) {
                           return CarParkCard(
-                            name: doc['name'] ?? 'Noma’lum',
-                            carid: doc['carid'] ?? 'Noma’lum',
-                            cartype: doc['cartype'] ?? 'assets/splash/taxi.png',
-                            carimage:
-                                doc['carimage'] ?? 'assets/splash/mers.png',
+                            model: CarParkCardModul(
+                              name: doc['name'] ?? 'Noma’lum',
+                              carid: doc['carid'] ?? 'Noma’lum',
+                              cartype:
+                                  doc['cartype'] ?? 'assets/splash/taxi.png',
+                              carimage:
+                                  doc['carimage'] ?? 'assets/splash/mers.png',
+                            ),
                           );
                         }).toList(),
                       );

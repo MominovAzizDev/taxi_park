@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:paycarmap/modul/car_park_card_modul.dart';
 
 import '../core/constants/splashColors.dart';
 
 class CarParkCard extends StatelessWidget {
-  final String name;
-  final String carid;
-  final String cartype;
-  final String carimage;
+  final CarParkCardModul model;
 
-  const CarParkCard({
-    super.key,
-    required this.name,
-    required this.carid,
-    required this.cartype,
-    required this.carimage,
-  });
+  const CarParkCard({super.key, required this.model});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -29,19 +21,19 @@ class CarParkCard extends StatelessWidget {
               ListTile(
                 title: Row(
                   children: [
-                    Image.asset(cartype, width: 24),
+                    Image.asset(model.cartype, width: 24),
                     SizedBox(width: 10),
-                    Text(name, style: TextStyle(fontSize: 16)),
+                    Text(model.name, style: TextStyle(fontSize: 16)),
                   ],
                 ),
                 subtitle: Text(
-                  carid,
+                  model.carid,
                   style: TextStyle(
                     fontSize: 14,
                     color: Splashcolors.smallTextColor,
                   ),
                 ),
-                trailing: Image.asset(carimage, width: 57),
+                trailing: Image.asset(model.carimage, width: 57),
               ),
             ],
           ),

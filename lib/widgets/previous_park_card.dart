@@ -1,23 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../core/constants/splashColors.dart';
+import '../modul/previous_park_card_modul.dart';
 
 class PreviousParkCard extends StatelessWidget {
-  final String title;
-  final String hour;
+  final PreviousParkCardModul model;
 
-  final String name;
-  final String place;
-  final String klm;
-
-  const PreviousParkCard({
-    super.key,
-    required this.title,
-    required this.hour,
-    required this.name,
-    required this.place,
-    required this.klm,
-  });
+  const PreviousParkCard({super.key, required this.model});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -35,7 +24,7 @@ class PreviousParkCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    title,
+                    model.title,
                     style: TextStyle(
                       fontSize: 12,
                       color: Splashcolors.smallTextColor,
@@ -46,7 +35,7 @@ class PreviousParkCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        hour,
+                        model.hour,
                         style: TextStyle(
                           fontSize: 16,
                           color: Splashcolors.colorBackColor,
@@ -65,7 +54,7 @@ class PreviousParkCard extends StatelessWidget {
                 ],
               ),
               Text(
-                name,
+                model.name,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 15),
@@ -73,7 +62,7 @@ class PreviousParkCard extends StatelessWidget {
                 children: [
                   Image.asset("assets/splash/spot.png", width: 18),
                   Text(
-                    place,
+                    model.place,
                     style: TextStyle(
                       fontSize: 12,
                       color: Splashcolors.smallTextColor,
@@ -82,7 +71,7 @@ class PreviousParkCard extends StatelessWidget {
                   SizedBox(width: 140),
                   Image.asset("assets/splash/location.png", width: 18),
                   Text(
-                    klm,
+                    model.klm,
                     style: TextStyle(
                       fontSize: 12,
                       color: Splashcolors.smallTextColor,

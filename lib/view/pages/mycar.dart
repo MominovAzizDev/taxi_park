@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:paycarmap/service/auth_service.dart';
 
 import '../../core/constants/splashColors.dart';
+import '../../modul/car_park_card_modul.dart';
 import '../../widgets/car_park_card.dart';
 
 class Mycar extends StatefulWidget {
@@ -165,14 +166,16 @@ class _MycarState extends State<Mycar> {
                               physics: NeverScrollableScrollPhysics(),
                               children: snapshot.data!.docs.map((doc) {
                                 return CarParkCard(
-                                  name: doc['name'] ?? 'Noma’lum',
-                                  carid: doc['carid'] ?? 'Noma’lum',
-                                  cartype:
-                                      doc['cartype'] ??
-                                      'assets/splash/taxi.png',
-                                  carimage:
-                                      doc['carimage'] ??
-                                      'assets/splash/mers.png',
+                                  model: CarParkCardModul(
+                                    name: doc['name'] ?? 'Noma’lum',
+                                    carid: doc['carid'] ?? 'Noma’lum',
+                                    cartype:
+                                        doc['cartype'] ??
+                                        'assets/splash/taxi.png',
+                                    carimage:
+                                        doc['carimage'] ??
+                                        'assets/splash/mers.png',
+                                  ),
                                 );
                               }).toList(),
                             );

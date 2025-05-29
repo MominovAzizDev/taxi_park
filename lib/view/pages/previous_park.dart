@@ -5,6 +5,7 @@ import 'package:paycarmap/service/auth_service.dart';
 import 'package:paycarmap/widgets/previous_park_card.dart';
 
 import '../../core/constants/splashColors.dart';
+import '../../modul/previous_park_card_modul.dart';
 
 class PreviousPark extends StatefulWidget {
   const PreviousPark({super.key});
@@ -54,8 +55,29 @@ class _PreviousParkState extends State<PreviousPark> {
             actions: [
               TextButton(
                 onPressed: () async {
+                  final uid = FirebaseAuth.instance.currentUser?.uid;
+                  if (uid == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Foydalanuvchi tizimga kirmagan"),
+                      ),
+                    );
+                    return;
+                  }
+                  if (titleController.text.isEmpty ||
+                      hourController.text.isEmpty ||
+                      nameController.text.isEmpty ||
+                      placeController.text.isEmpty ||
+                      klmController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Barcha maydonlarni to'ldiring"),
+                      ),
+                    );
+                    return;
+                  }
                   await AuthService().addCarPark(
-                    FirebaseAuth.instance.currentUser!.uid,
+                    uid,
                     titleController.text,
                     hourController.text,
                     nameController.text,
@@ -87,7 +109,7 @@ class _PreviousParkState extends State<PreviousPark> {
             ),
           ),
           onPressed: () {},
-          icon: Icon(Icons.menu),
+          icon: const Icon(Icons.menu),
         ),
         title: Text(
           "Previous parking",
@@ -96,7 +118,7 @@ class _PreviousParkState extends State<PreviousPark> {
         centerTitle: true,
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 10),
+            padding: const EdgeInsets.only(right: 10),
             child: GestureDetector(
               onTap: () {},
               child: Image.asset("assets/splash/Group 49.png", width: 50),
@@ -109,15 +131,15 @@ class _PreviousParkState extends State<PreviousPark> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(left: 10),
+              margin: const EdgeInsets.only(left: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 33),
+                  const SizedBox(height: 33),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(
+                      const Text(
                         "My Previous parking",
                         style: TextStyle(
                           fontSize: 18,
@@ -136,9 +158,11 @@ class _PreviousParkState extends State<PreviousPark> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   uid == null
-                      ? Center(child: Text("Foydalanuvchi tizimga kirmagan"))
+                      ? const Center(
+                          child: Text("Foydalanuvchi tizimga kirmagan"),
+                        )
                       : StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
                               .collection('users')
@@ -151,16 +175,26 @@ class _PreviousParkState extends State<PreviousPark> {
                                 child: Text("Xatolik: ${snapshot.error}"),
                               );
                             }
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                child: Text("Hech qanday park topilmadi"),
+                              );
+                            }
                             return ListView(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              children: snapshot.data!.docs.map((doc) {
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: snapshot.data!.docs.map<Widget>((doc) {
                                 return PreviousParkCard(
-                                  title: doc['title'] ?? "Noma'lum",
-                                  hour: doc['hour'] ?? "Noma'lum",
-                                  name: doc['name'] ?? "Noma'lum",
-                                  place: doc['place'] ?? "Noma'lum",
-                                  klm: doc['klm'] ?? "Noma'lum",
+                                  model: PreviousParkCardModul(
+                                    title:
+                                        doc['title']?.toString() ?? "Noma'lum",
+                                    hour: doc['hour']?.toString() ?? "Noma'lum",
+                                    name: doc['name']?.toString() ?? "Noma'lum",
+                                    place:
+                                        doc['place']?.toString() ?? "Noma'lum",
+                                    klm: doc['klm']?.toString() ?? "Noma'lum",
+                                  ),
                                 );
                               }).toList(),
                             );
